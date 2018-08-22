@@ -1,0 +1,5 @@
+2018-08-21 22:32:43,459:__main__:Tried to divide by zero
+Traceback (most recent call last):
+  File "<ipython-input-1-3f67ae5d35e5>", line 24, in divide
+    result = x/y
+ZeroDivisionError: division by zero
