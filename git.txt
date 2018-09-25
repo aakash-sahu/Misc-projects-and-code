@@ -1,0 +1,177 @@
+git --version
+
+git config --global https.proxy https://proxy.statestr.com:80/
+
+git config --list
+
+git config --global user.name "Aakash Sahu"
+
+git config --global user.email "name@email.com"
+
+git config --global --list
+
+git init
+
+git status
+
+touch .gitignore
+
+vi ./.gitignore 
+
+	Press a to toggle the edit mode
+	Edit stuff
+	Press Esc to finish edit mode and toggle the command mode
+	Press/type : to indicate you want to type a command
+	Type and enter wq to save the changes and exit
+	
+git add -A (stages all files)
+git add <filename>
+
+remove files from staging area 
+git reset <filename>
+git reset (removes all files from staging)
+
+git commit -m "msg
+(-m for message)
+
+To push git to new repository (first create on github.com)
+git remote add origin <URL of repository>
+git push -u origin master
+
+cloning a repository (try in cdsw in other folder)
+git clone <git repository URL> <path>
+
+git remote -v (lists info of repositories)
+
+git diff (shows changes done to files)
+
+git add
+git status
+git commit -m "msg"
+
+#to pull latest files
+git pull origin master
+
+#to push your changes
+git push origin master
+
+#branch: create branch for new feature
+git branch calc-divide
+
+#To start working on branch
+git checkout calc-divide
+
+#To see branches
+git branch -a	
+
+#to push branch
+git push -u origin calc-divide
+
+git branch -a
+
+#to merge branch
+#1.
+git checkout master
+
+git pull origin master
+
+#2.check merged branches
+git branch --merged
+
+#
+git merge calc-divide
+git push origin master
+
+#Deleting a branch
+
+git branch -d calc-divide
+
+git branch -a
+
+#to delete from remote
+git push origin --delete calc-divide
+
+
+##Fixing common mistakes and undoing bad commits
+
+# if made bad changes in file
+git checkout <file name> 
+
+#input wrong commit msg, modify commit msg
+
+git commit --amend -m "added cross val lines"
+
+git commit --amend #opens interactive page
+
+git log --stat
+
+#git cherry-pick - 
+copy the hash from git log
+
+create branch and checkout the branch
+
+git cherry-pick 622ae1
+
+#to delete from master branch
+3 kinds of checkout
+##pending
+
+#stash
+git stash save "added function" 
+#change is reverted in file but stashed by git
+
+git stash list
+#Output: stash@{0}: On add: worked on add func
+
+git stash apply stash@{0}
+
+#apply change for the first stash and delete the stash
+git stash pop 
+
+#to delete a stash
+git stash list
+
+cdsw@n6r3hixuclgb5bf7:~$ git stash list
+stash@{0}: On add: added sq func
+stash@{1}: On add: added more funcs
+
+
+
+git stash drop stash@{0}
+
+#to get rid of all stashes
+git stash clear
+
+#one stash can be applied to different branch
+
+
+#Git diff and merge tools
+#install diffmerge and set in git --config
+
+git difftool
+
+#This will revert all local uncommitted changes (should be executed in repo root):
+
+git checkout .
+
+
+#Different git add
+#add all files to the staging area
+git add -A 
+
+#unstage all changes
+git reset
+
+
+#only files in a sub-directory
+git add -A sub-dir/
+
+#git add -A  is the default behaviour
+
+#only add updated or modified files (not new files)
+git add -u
+
+#only current directory
+git add .
+
+don't use git add * ( as it might not add deleted or hidden file)
