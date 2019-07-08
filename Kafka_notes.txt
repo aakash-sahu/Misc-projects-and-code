@@ -1,0 +1,48 @@
+#application with kafka, python, on docker
+https://blog.florimondmanca.com/building-a-streaming-fraud-detection-system-with-kafka-and-python
+
+#kafka listeners
+https://rmoff.net/2018/08/02/kafka-listeners-explained/
+
+https://towardsdatascience.com/getting-started-with-apache-kafka-in-python-604b3250aa05
+
+https://community.hortonworks.com/articles/81144/using-python-client-to-readwrite-data-tofrom-kafka.html
+https://towardsdatascience.com/kafka-python-explained-in-10-lines-of-code-800e3e07dad1
+
+#create topic in docker
+docker exec 69f kafka-topics --create --topic train_stream --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181
+
+docker exec 528 kafka-topics --create --topic test_stream --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181
+
+
+#to check topic
+docker exec 532 kafka-topics --describe --topic foo --zookeeper zookeeper:2181
+
+jupyter notebook --no-browser --port 8080
+
+#docker compose for zookeeper and kafka:
+version: '3'
+
+
+services:
+  zookeeper:
+   image: confluentinc/cp-zookeeper:latest
+   environment:
+    ZOOKEEPER_CLIENT_PORT: 2181
+    ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+   image: confluentinc/cp-kafka:latest
+   depends_on:
+    - zookeeper
+   ports:
+    - 9092:9092
+    - 39092:39092
+   environment:
+    KAFKA_BROKER_ID: 1
+    KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://35.174.187.121:9092, PLAINTEXT_LOCAL://localhost:39092
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT_LOCAL:PLAINTEXT
+    KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
