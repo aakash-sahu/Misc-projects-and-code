@@ -1,0 +1,114 @@
+### DockerFile (includes oracle client and odbc ###
+
+FROM python:3.7
+
+# Installing Oracle instant client
+WORKDIR    /opt/oracle
+RUN        apt-get update && apt-get install -y libaio1 wget unzip cron \
+            && wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip \
+            && unzip instantclient-basiclite-linuxx64.zip \
+            && rm -f instantclient-basiclite-linuxx64.zip \
+            && cd /opt/oracle/instantclient* \
+            && rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci \
+            && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
+            && ldconfig
+
+WORKDIR /usr/src/app
+
+RUN apt-get update && apt-get install -y cron unixodbc-dev
+
+# copy requirements .txt
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# copy cron-job file to corn.d directory
+COPY cron-job /etc/cron.d/cron-job
+
+#give execution rights to the cron job
+RUN chmod 0644 /etc/cron.d/cron-job
+
+#apply cron job
+RUN crontab /etc/cron.d/cron-job
+
+# Create the log file
+RUN touch /var/log/cron.log
+
+# Run the command on container startup
+CMD cron && tail -f /var/log/cron.log
+
+##### END DOCKERFILE #####
+
+
+
+
+#### cron-script-docker.sh file ###
+#!/bin/bash
+
+#Need to export env variable as cron doesn't have visibility. e.g.  
+export http_proxy=http://proxy..com:8888
+echo $http_proxy
+cd /usr/src/app/
+# python3 test_path.py
+echo 'starting python'
+python3 python_script.py 
+echo 'done'
+
+### END shell script ###
+
+
+
+
+#### cron-job file referred in Dockerfile ####
+# Run at 9:15 AM on workweek days
+15 9 * * 1-5 /bin/bash /usr/src/app/caching_script_docker.sh >> /var/log/cron.log 2>&1
+# Empty line required at end of file for valid cron file
+
+###END CRON-JOB filr ####
+
+
+
+
+#### build docker image using docker build -t docker-cron . ###
+
+#### docker-run.sh file ####
+# run docker  script. RUn from the main script folder
+sudo docker run -it -d --rm \
+-v "$PWD"/:/usr/src/app/ \
+-v /etc/localtime:/etc/localtime:ro \
+docker-cron
+
+
+
+## Add following to top of python script so cron env can find python libraries
+import sys
+sys.path.append('/usr/local/lib/python3.7/site-packages') #for running docker cron job
+####
+
+
+
+### E.g. requirements.txt file content ####
+scikit-learn==0.21.2
+scipy==1.4.1
+snowflake-sqlalchemy==1.2.3
+SQLAlchemy==1.3.17
+PyYAML==5.3.1
+
+#### Shell script to run cron job in linux instance itself ##
+#!/bin/bash
+
+source /path/to/miniconda3/etc/profile.d/conda.sh
+conda activate env_name
+echo 'conda env activated'
+export http_proxy=http://proxyserver.com:8000
+export env_var=abc
+echo $http_proxy
+echo $env_var
+cd /path/to/python_script/folder/
+echo 'starting python'
+python python_script.py 
+echo 'done'
+
+### ... with the cron job ##
+$crontab -e #(opens nano) -l show 
+..and add..
+*/30 * * * * /bin/bash /full/path/to/caching_script.sh
