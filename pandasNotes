@@ -1,0 +1,11 @@
+## 
+
+# Change display rows and columns
+pd.set_option("display.max_columns", 200)
+pd.set_option("display.max_rows", 200)
+
+
+## Code to custom sort a column in pandas dataframe		
+col_custom_sort_order = ['AA1', 'AA2', 'AA3', 'A1', 'A2', 'A3','BAA1', 'BAA2', 'BAA3', 'BA1', 'BA2', 'BA3',
+                           'B1', 'B2', 'B3' , 'CAA1', 'CAA2', 'CAA3',  ]
+df['col_name'] = pd.Categorical(df['col_name'],categories=col_custom_sort_order, ordered=True )
